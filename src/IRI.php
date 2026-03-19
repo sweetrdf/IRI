@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * (c) Markus Lanthaler <mail@markus-lanthaler.com>
  *
@@ -13,6 +15,7 @@ namespace ML\IRI;
  * IRI represents an IRI as per RFC3987.
  *
  * @author Markus Lanthaler <mail@markus-lanthaler.com>
+ * @author Konrad Abicht <hi@inspirito.de>
  *
  * @link http://tools.ietf.org/html/rfc3987 RFC3987
  */
@@ -20,82 +23,60 @@ class IRI
 {
     /**
      * The scheme
-     *
-     * @var string|null
      */
-    private $scheme = null;
+    private ?string $scheme = null;
 
     /**
      * The user information
-     *
-     * @var string|null
      */
-    private $userinfo = null;
+    private ?string $userinfo = null;
 
     /**
      * The host
-     *
-     * @var string|null
      */
-    private $host = null;
+    private ?string $host = null;
 
     /**
      * The port
-     *
-     * @var string|null
      */
-    private $port = null;
+    private ?string $port = null;
 
     /**
      * The path
-     *
-     * @var string
      */
-    private $path = '';
+    private string $path = '';
 
     /**
      * The query component
-     *
-     * @var string|null
      */
-    private $query = null;
+    private ?string $query = null;
 
     /**
      * The fragment identifier
-     *
-     * @var string|null
      */
-    private $fragment = null;
+    private ?string $fragment = null;
 
     /**
-     * Constructor
-     *
-     * @param null|string|IRI $iri The IRI.
-     *
      * @throws \InvalidArgumentException If an invalid IRI is passed.
      *
      * @api
      */
-    public function __construct($iri = null)
+    public function __construct(string|IRI|null $iri = null)
     {
         if (null === $iri) {
             return;
         } elseif (is_string($iri)) {
             $this->parse($iri);
-        } elseif ($iri instanceof IRI) {
-            $this->scheme = $iri->scheme;
-            $this->userinfo = $iri->userinfo;
-            $this->host = $iri->host;
-            $this->port = $iri->port;
-            $this->path = $iri->path;
-            $this->query = $iri->query;
-            $this->fragment = $iri->fragment;
-        } else {
-            throw new \InvalidArgumentException(
-                'Expecting a string or an IRI, got ' .
-                (is_object($iri) ? get_class($iri) : gettype($iri))
-            );
+            return;
         }
+
+        $this->scheme = $iri->scheme;
+        $this->userinfo = $iri->userinfo;
+        $this->host = $iri->host;
+        $this->port = $iri->port;
+        $this->path = $iri->path;
+        $this->query = $iri->query;
+        $this->fragment = $iri->fragment;
     }
 
     /**
@@ -103,7 +84,7 @@ class IRI
      *
      * @return string|null Returns the scheme or null if not set.
      */
-    public function getScheme()
+    public function getScheme(): ?string
     {
         return $this->scheme;
     }
@@ -113,7 +94,7 @@ class IRI
      *
      * @return string|null Returns the authority or null if not set.
      */
-    public function getAuthority()
+    public function getAuthority(): ?string
     {
         $authority = null;
 
@@ -136,7 +117,7 @@ class IRI
      *
      * @return string|null Returns the user information or null if not set.
      */
-    public function getUserInfo()
+    public function getUserInfo(): ?string
     {
         return $this->userinfo;
     }
@@ -146,7 +127,7 @@ class IRI
      *
      * @return string|null Returns the host or null if not set.
      */
-    public function getHost()
+    public function getHost(): ?string
     {
         return $this->host;
     }
@@ -156,7 +137,7 @@ class IRI
      *
      * @return string|null Returns the port or null if not set.
      */
-    public function getPort()
+    public function getPort(): ?string
     {
         return $this->port;
     }
@@ -166,7 +147,7 @@ class IRI
      *
      * @return string Returns the path which might be empty.
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -176,7 +157,7 @@ class IRI
      *
      * @return string|null Returns the query component or null if not set.
      */
-    public function getQuery()
+    public function getQuery(): ?string
     {
         return $this->query;
     }
@@ -186,7 +167,7 @@ class IRI
      *
      * @return string|null Returns the fragment identifier or null if not set.
      */
-    public function getFragment()
+    public function getFragment(): ?string
     {
         return $this->fragment;
     }
@@ -198,7 +179,7 @@ class IRI
      *
      * @api
      */
-    public function isAbsolute()
+    public function isAbsolute(): bool
     {
         return (null !== $this->scheme);
     }
@@ -214,7 +195,7 @@ class IRI
      *
      * @api
      */
-    public function getAbsoluteIri()
+    public function getAbsoluteIri(): self
     {
         if (false === $this->isAbsolute()) {
             throw new \UnexpectedValueException('Cannot get the absolute IRI of a relative IRI.');
@@ -235,7 +216,7 @@ class IRI
      *
      * @api
      */
-    public function equals($iri)
+    public function equals($iri): bool
     {
         // Make sure both instances are strings
         return ($this->__toString() === (string)$iri);
@@ -255,7 +236,7 @@ class IRI
      *
      * @api
      */
-    public function resolve($reference)
+    public function resolve($reference): self
     {
         $reference = new IRI($reference);
 
@@ -310,7 +291,6 @@ class IRI
 
         $fragment = $reference->fragment;
 
-
         // The Component Recomposition algorithm as specified by RFC3986
         // see: http://tools.ietf.org/html/rfc3986#section-5.3
         $result = '';
@@ -351,7 +331,7 @@ class IRI
      *
      * @api
      */
-    public function relativeTo($base, $schemaRelative = false)
+    public function relativeTo($base, $schemaRelative = false): self
     {
         if (false === ($base instanceof IRI)) {
             $base = new IRI($base);
@@ -431,18 +411,18 @@ class IRI
      * {@link IRI::relativeTo()} method if the base IRI stays the same while
      * the IRIs to convert to relative IRI references change.
      *
-     * @param  string|IRI $iri The IRI to convert to a relative reference
-     * @param bool             Defines whether schema-relative IRIs such
-     *                         as `//example.com` should be created (`true`)
-     *                         or not (`false`).
+     * @param string|IRI $iri The IRI to convert to a relative reference
+     * @param bool            Defines whether schema-relative IRIs such
+     *                        as `//example.com` should be created (`true`)
+     *                        or not (`false`).
      *
      * @throws \InvalidArgumentException If an invalid IRI is passed.
      *
      * @see \ML\IRI\IRI::relativeTo()
      *
-     * @return IRI      The relative IRI reference
+     * @return IRI The relative IRI reference
      */
-    public function baseFor($iri, $schemaRelative = false)
+    public function baseFor($iri, $schemaRelative = false): IRI
     {
         if (false === ($iri instanceof IRI)) {
             $iri = new IRI($iri);
@@ -458,7 +438,7 @@ class IRI
      *
      * @api
      */
-    public function __toString()
+    public function __toString(): string
     {
         $result = '';
 
@@ -491,7 +471,7 @@ class IRI
      *
      * @param string $iri The IRI to parse.
      */
-    protected function parse($iri)
+    protected function parse($iri): void
     {
         // Parse IRI by using the regular expression as specified by
         // http://tools.ietf.org/html/rfc3986#appendix-B
@@ -563,7 +543,7 @@ class IRI
      *
      * @link http://tools.ietf.org/html/rfc3986#section-5.2.4
      */
-    private static function removeDotSegments($input)
+    private static function removeDotSegments($input): string
     {
         $output = '';
 

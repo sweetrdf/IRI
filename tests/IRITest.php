@@ -84,16 +84,6 @@ class IRITest extends TestCase
     }
 
     /**
-     * Test whether parsing invalid values leads to an exception
-     */
-    public function testParseInvalidValue()
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        new IRI(2);
-    }
-
-    /**
      * Test whether an IRI is an absolute IRI or a relative one
      *
      * @param string $iri        The IRI to test.
