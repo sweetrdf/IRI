@@ -1,47 +1,41 @@
-IRI
-==============
+# IRI (Fork)
 
-This is a simple PHP class to ease IRI handling. Currently it just supports
-parsing of IRIs and relative IRI resolution. In the future I will extend it
-to support validation and normalization and perhaps also support for IRI
-templates.
+> [!NOTE]
+> **This is a fork of the
+> [Original IRI](https://github.com/lanthaler/IRI)** class
+> written by [Markus Lanthaler](https://github.com/lanthaler).
+> I maintain it in my spare time to keep it alive and usable on the latest PHP versions.
+> Code is more or less maintained but not developed any further.
+> If you wanna participate, feel free to open a pull request!
 
-With more than 700 tests, this class is extensively unit tested:
-[![Build Status](https://secure.travis-ci.org/lanthaler/IRI.png?branch=master)](http://travis-ci.org/lanthaler/IRI)
-[![Code Coverage](https://scrutinizer-ci.com/g/lanthaler/IRI/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/lanthaler/IRI/?branch=master)
+This is a simple PHP class to ease IRI handling.
+Currently it just supports parsing of IRIs and relative IRI resolution.
 
+With more than **800 tests**, this class is extensively tested.
 
-Installation
-------------
+## Installation
 
-The easiest way to use IRI is to integrate it as a dependency in your project's
-[composer.json](http://getcomposer.org/doc/00-intro.md) file:
+The easiest way to use IRI is to integrate it as a dependency in your project's [composer.json](http://getcomposer.org/doc/00-intro.md) file:
 
 ```json
 {
     "require": {
-        "ml/iri": "1.*"
+        "sweetrdf/iri": "^1"
     }
 }
 ```
 
-Installing is then a matter of running composer
+or run:
 
-    php composer.phar install
+> composer install sweetrdf/iri
 
-... and including Composer's autoloader to your project
+Of course you can also just download an [archive](https://github.com/lanthaler/IRI/downloads) from Github.
 
-```php
-require('vendor/autoload.php');
-```
+### Compatible with original ml/iri
 
+You can use this library as a drop-in replacement for the original `ml/iri` library.
 
-Of course you can also just download an [archive](https://github.com/lanthaler/IRI/downloads)
-from Github.
-
-
-Credits
-------------
+## Credits
 
 Most test cases come either directly from the [URI specification](http://tools.ietf.org/html/rfc3986),
 from [Graham Klyne's](http://www.ninebynine.org/Software/HaskellUtils/Network/URITestDescriptions.html),
