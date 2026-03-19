@@ -1,5 +1,5 @@
 {
-    "name": "ml/iri",
+    "name": "sweetrdf/iri",
     "type": "library",
     "description": "IRI handling for PHP",
     "keywords": [ "IRI", "URL", "URI", "URN" ],
