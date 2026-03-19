@@ -210,13 +210,13 @@ class IRI
     /**
      * Check whether the passed IRI is equal
      *
-     * @param IRI|string $iri IRI to compare to this instance.
+     * @param self|string $iri IRI to compare to this instance.
      *
      * @return bool Returns true if the two IRIs are equal, false otherwise.
      *
      * @api
      */
-    public function equals($iri): bool
+    public function equals(self|string $iri): bool
     {
         // Make sure both instances are strings
         return ($this->__toString() === (string)$iri);
@@ -225,10 +225,10 @@ class IRI
     /**
      * Resolve a (relative) IRI reference against this IRI
      *
-     * @param IRI|string $reference The (relative) IRI reference that should
-     *                              be resolved against this IRI.
+     * @param self|string|null $reference The (relative) IRI reference that should
+     *                                    be resolved against this IRI.
      *
-     * @return IRI The resolved IRI.
+     * @return self The resolved IRI.
      *
      * @throws \InvalidArgumentException If an invalid IRI is passed.
      *
@@ -236,9 +236,9 @@ class IRI
      *
      * @api
      */
-    public function resolve($reference): self
+    public function resolve(self|string|null $reference): self
     {
-        $reference = new IRI($reference);
+        $reference = new self($reference);
 
         $scheme = null;
         $authority = null;
@@ -313,17 +313,17 @@ class IRI
             $result .= '#' . $fragment;
         }
 
-        return new IRI($result);
+        return new self($result);
     }
 
     /**
      * Transform this IRI to a IRI reference relative to the passed base IRI
      *
-     * @param IRI|string $base The (relative) IRI reference that should be
-     *                         be used as base IRI.
-     * @param bool             Defines whether schema-relative IRIs such
-     *                         as `//example.com` should be created (`true`)
-     *                         or not (`false`).
+     * @param IRI|string|null $base The (relative) IRI reference that should be
+     *                        be used as base IRI.
+     * @param bool            Defines whether schema-relative IRIs such
+     *                        as `//example.com` should be created (`true`)
+     *                        or not (`false`).
      *
      * @return IRI The IRI reference relative to the passed base IRI.
      *
@@ -331,10 +331,10 @@ class IRI
      *
      * @api
      */
-    public function relativeTo($base, $schemaRelative = false): self
+    public function relativeTo(self|string|null $base, $schemaRelative = false): self
     {
-        if (false === ($base instanceof IRI)) {
-            $base = new IRI($base);
+        if (false === $base instanceof self) {
+            $base = new self($base);
         }
         $relative = clone $this;
 
@@ -422,10 +422,10 @@ class IRI
      *
      * @return IRI The relative IRI reference
      */
-    public function baseFor($iri, $schemaRelative = false): IRI
+    public function baseFor(self|string $iri, bool $schemaRelative = false): self
     {
         if (false === ($iri instanceof IRI)) {
-            $iri = new IRI($iri);
+            $iri = new self($iri);
         }
 
         return $iri->relativeTo($this, $schemaRelative);
@@ -471,7 +471,7 @@ class IRI
      *
      * @param string $iri The IRI to parse.
      */
-    protected function parse($iri): void
+    protected function parse(string $iri): void
     {
         // Parse IRI by using the regular expression as specified by
         // http://tools.ietf.org/html/rfc3986#appendix-B
@@ -543,7 +543,7 @@ class IRI
      *
      * @link http://tools.ietf.org/html/rfc3986#section-5.2.4
      */
-    private static function removeDotSegments($input): string
+    private static function removeDotSegments(string $input): string
     {
         $output = '';
 
