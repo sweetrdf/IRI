@@ -67,7 +67,6 @@ class IRI
      */
     private $fragment = null;
 
-
     /**
      * Constructor
      *

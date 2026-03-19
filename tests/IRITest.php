@@ -7,17 +7,20 @@
  * file that was distributed with this source code.
  */
 
-namespace ML\IRI\Test;
+namespace ML\IRI\Tests;
 
+use InvalidArgumentException;
 use ML\IRI\IRI;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use UnexpectedValueException;
 
 /**
  * The IRI test suite.
  *
  * @author Markus Lanthaler <mail@markus-lanthaler.com>
  */
-class IriTest extends TestCase
+class IRITest extends TestCase
 {
     /**
      * Test parsing
@@ -32,23 +35,22 @@ class IriTest extends TestCase
      * @param string|null $path     The path.
      * @param string|null $query    The query component.
      * @param string|null $fragment The fragment identifier.
-     *
-     * @dataProvider decompositionProvider
      */
+    #[DataProvider('decompositionProvider')]
     public function testDecomposition($iri, $scheme, $userinfo, $host, $port, $path, $query, $fragment)
     {
         $iri = new IRI($iri);
         $test = new IRI($iri);  // test copy-constructor
 
-        $this->assertEquals($scheme, $test->getScheme(), 'Scheme of ' . $iri);
-        $this->assertEquals($userinfo, $test->getUserInfo(), 'User info of ' . $iri);
-        $this->assertEquals($host, $test->getHost(), 'Host of ' . $iri);
-        $this->assertEquals($port, $test->getPort(), 'Port of ' . $iri);
-        $this->assertEquals($path, $test->getPath(), 'Path of ' . $iri);
-        $this->assertEquals($query, $test->getQuery(), 'Query component of ' . $iri);
-        $this->assertEquals($fragment, $test->getFragment(), 'Fragment of ' . $iri);
-        $this->assertEquals($iri, $test->__toString(), 'Recomposition of ' . $iri);
-        $this->assertTrue($test->equals($iri), 'Test equality of parsed ' . $iri);
+        self::assertEquals($scheme, $test->getScheme(), 'Scheme of ' . $iri);
+        self::assertEquals($userinfo, $test->getUserInfo(), 'User info of ' . $iri);
+        self::assertEquals($host, $test->getHost(), 'Host of ' . $iri);
+        self::assertEquals($port, $test->getPort(), 'Port of ' . $iri);
+        self::assertEquals($path, $test->getPath(), 'Path of ' . $iri);
+        self::assertEquals($query, $test->getQuery(), 'Query component of ' . $iri);
+        self::assertEquals($fragment, $test->getFragment(), 'Fragment of ' . $iri);
+        self::assertEquals($iri, $test->__toString(), 'Recomposition of ' . $iri);
+        self::assertTrue($test->equals($iri), 'Test equality of parsed ' . $iri);
     }
 
     /**
@@ -60,7 +62,7 @@ class IriTest extends TestCase
      *
      * @return array The decomposition test cases.
      */
-    public function decompositionProvider()
+    public static function decompositionProvider()
     {
         return array(  //$iri, $scheme, $userinfo, $host, $port, $path, $query, $fragment
             // http://tools.ietf.org/html/rfc3986#section-1.1.2
@@ -83,11 +85,11 @@ class IriTest extends TestCase
 
     /**
      * Test whether parsing invalid values leads to an exception
-     *
-     * @expectedException InvalidArgumentException
      */
     public function testParseInvalidValue()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         new IRI(2);
     }
 
@@ -96,15 +98,13 @@ class IriTest extends TestCase
      *
      * @param string $iri        The IRI to test.
      * @param bool   $isAbsolute True if the IRI is absolute, false otherwise.
-     *
-     * @dataProvider isAbsoluteProvider
      */
+    #[DataProvider('isAbsoluteProvider')]
     public function testIsAbsolute($iri, $isAbsolute)
     {
         $iri = new IRI($iri);
         $this->assertEquals($isAbsolute, $iri->isAbsolute());
     }
-
 
     /**
      * Absolute/relative IRI test cases
@@ -115,7 +115,7 @@ class IriTest extends TestCase
      *
      * @return array The absolute/relative IRI test cases.
      */
-    public function isAbsoluteProvider()
+    public static function isAbsoluteProvider()
     {
         return array(
             // http://tools.ietf.org/html/rfc3986#section-5.4
@@ -213,11 +213,11 @@ class IriTest extends TestCase
 
     /**
      * Test conversion to absolute IRI for a relative IRI
-     *
-     * @expectedException UnexpectedValueException
      */
     public function testGetAbsoluteIriOnRelativeIri()
     {
+        $this->expectException(UnexpectedValueException::class);
+
         $iri = new IRI('/relative#with-fragment');
         $iri->getAbsoluteIri();
     }
@@ -228,9 +228,8 @@ class IriTest extends TestCase
      * @param string $base      The base IRI.
      * @param string $reference The reference to resolve.
      * @param string $expected  The expected absolute IRI.
-     *
-     * @dataProvider referenceResolutionProvider
      */
+    #[DataProvider('referenceResolutionProvider')]
     public function testReferenceResolution($base, $reference, $expected)
     {
         $base = new IRI($base);
@@ -249,7 +248,7 @@ class IriTest extends TestCase
      *
      * @return array The reference resolution test cases.
      */
-    public function referenceResolutionProvider()
+    public static function referenceResolutionProvider()
     {
         return array(  // $base, $relative, $absolute
             array('', '../a/b', '/a/b'),
@@ -922,16 +921,15 @@ class IriTest extends TestCase
      * @param string $base           The base IRI.
      * @param bool   $schemaRelative Should schema-relative IRIs be created?
      * @param string $expected       The expected IRI reference.
-     *
-     * @dataProvider relativizeProvider
      */
+    #[DataProvider('relativizeProvider')]
     public function testRelativize($iri, $base, $schemaRelative, $expected)
     {
         $iri = new IRI($iri);
-        $this->assertEquals($expected, (string)$iri->relativeTo($base, $schemaRelative));
+        self::assertEquals($expected, (string)$iri->relativeTo($base, $schemaRelative));
 
         $base = new IRI($base);
-        $this->assertEquals($expected, (string)$base->baseFor((string)$iri, $schemaRelative));
+        self::assertEquals($expected, (string)$base->baseFor((string)$iri, $schemaRelative));
     }
 
     /**
@@ -942,7 +940,7 @@ class IriTest extends TestCase
      *
      * @return array The test cases.
      */
-    public function relativizeProvider()
+    public static function relativizeProvider()
     {
         return array(  // $iri, $base, $schemaRelative, $expected
             array('http://example.com/x/y?k=v', 'http://example.com', false, '/x/y?k=v'),
