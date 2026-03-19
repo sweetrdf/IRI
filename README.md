@@ -39,7 +39,7 @@ However, the `IRI` class was adapted to be more type safe:
 - Added explicit type information to each class property
 - Added explicit return value types to each class method
 
-:exclamation: `IRI` does not throw an `InvalidArgumentException` anymore!
+:exclamation: `IRI` does not throw an `InvalidArgumentException` anymore if an invalid value was given in the constructor!
 In this case PHP itself will complain.
 
 ## Credits
