@@ -33,7 +33,14 @@ Of course you can also just download an [archive](https://github.com/lanthaler/I
 
 ### Compatible with original ml/iri
 
-You can use this library as a drop-in replacement for the original `ml/iri` library.
+This library is intented to be a drop-in replacement for the original `ml/iri` library.
+However, the `IRI` class was adapted to be more type safe:
+- Added `declare(strict_types=1);` to the file
+- Added explicit type information to each class property
+- Added explicit return value types to each class method
+
+:exclamation: `IRI` does not throw an `InvalidArgumentException` anymore!
+In this case PHP itself will complain.
 
 ## Credits
 
